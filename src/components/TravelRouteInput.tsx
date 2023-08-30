@@ -4,22 +4,19 @@ import { SyntheticEvent, useCallback, useMemo, useState } from "react"
 import { numberToOrdinalString } from "../utils/TextManipulation"
 import { debounce } from "lodash"
 import { findCity } from "../services/FakeBacked"
-
-type TravelRoute = {
-  origin: string
-  destinations: string[]
-}
+import { TravelRoute } from '../pages/SearchForm';
 
 const debounceTime = 500
 
-export const TravelRouteInput = () => {
-  const [travelRoute, setTravelRoute] = useState<TravelRoute>({
-    origin: '',
-    destinations: [''],
-  })
+export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRoute: (tr: TravelRoute) => void}) => {
+  const { travelRoute, setTravelRoute } = props
 
   const [availableCityOptions, setAvailableCityOptions] = useState<string[]>([])
   const [optionsAreLoading, setOptionsAreLoading] = useState(false)
+
+  const updateTravelRoute = useCallback((updater: (travelRoute: TravelRoute) => TravelRoute) => {
+    setTravelRoute(updater(travelRoute))
+  }, [setTravelRoute, travelRoute])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onCityInputChange = useCallback(debounce((_e: SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
@@ -40,30 +37,28 @@ export const TravelRouteInput = () => {
 
   const onCitySelect = useCallback((travelRouteKey: string) => (_e: SyntheticEvent<Element, Event>, value: string | null,) => {
     if (travelRouteKey === 'origin') {
-      setTravelRoute(travelRoute => ({ ...travelRoute, origin: value || '' }))
+      updateTravelRoute(travelRoute => ({ ...travelRoute, origin: value || '' }))
     } else {
       const index = parseInt(travelRouteKey.split('-')[1])
       const newDestinations = [...travelRoute.destinations]
       newDestinations[index] = value || ''
-      setTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
+      updateTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
     }
     setAvailableCityOptions(() => [])
-  }, [travelRoute.destinations])
+  }, [travelRoute.destinations, updateTravelRoute])
 
 
   const onAddNextDestination = useCallback(() => {
-    setTravelRoute(travelRoute => ({ ...travelRoute, destinations: [...travelRoute.destinations, ''] }))
-  }, [])
+    updateTravelRoute(travelRoute => ({ ...travelRoute, destinations: [...travelRoute.destinations, ''] }))
+  }, [updateTravelRoute])
 
   const onRemoveDestination = useCallback((index: number) => {
     const newDestinations = [...travelRoute.destinations]
-    const removed = newDestinations.splice(index, 1)
-    console.log('removed', removed)
-    setTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
-  }, [travelRoute.destinations])
+    newDestinations.splice(index, 1)
+    updateTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
+  }, [travelRoute.destinations, updateTravelRoute])
 
   const onAutocompleteBlur = useCallback(() => {
-    console.log('blur')
     setAvailableCityOptions(() => [])
   }, [])
 
@@ -104,6 +99,7 @@ export const TravelRouteInput = () => {
   return (<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em', flexGrow: 5 }}>
     <Autocomplete id={`travel-route-origin`}
       options={availableCityOptions}
+      value={travelRoute.origin || ''}
       onInputChange={onCityInputChange}
       onChange={onCitySelect('origin')}
       onBlur={onAutocompleteBlur}
