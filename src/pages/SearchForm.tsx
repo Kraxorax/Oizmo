@@ -10,30 +10,43 @@ export const SearchForm = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const numPas = +(searchParams.get('numPas') || 1)
   const date = dayjs(searchParams.get('date') || dayjs().format('YYYY-MM-DD'))
-  const travelRoute = JSON.parse(searchParams.get('travelRoute') || JSON.stringify(emptyTravelRoute))
+  const travelRoute: TravelRoute = JSON.parse(searchParams.get('travelRoute') || JSON.stringify(emptyTravelRoute))
 
   const setNumOfPassengers = (n: number) => {
-    setSearchParams((prev) => {
-      prev.set('numPas', n.toString())
-      return prev
+    setSearchParams((urlsp) => {
+      urlsp.set('numPas', n.toString())
+      return urlsp
     })
   }
 
   const setDate = (date: dayjs.Dayjs | null) => {
     if (!date) return
-    setSearchParams((prev) => {
-      prev.set('date', date.format('YYYY-MM-DD'))
-      return prev
+    setSearchParams((urlsp) => {
+      urlsp.set('date', date.format('YYYY-MM-DD'))
+      return urlsp
     })
   }
 
   const setTravelRoute = (travelRoute: TravelRoute) => {
-    setSearchParams((prev) => {
-      prev.set('travelRoute', JSON.stringify(travelRoute))
-      return prev
+    setSearchParams((urlsp) => {
+      urlsp.set('travelRoute', JSON.stringify(travelRoute))
+      return urlsp
     })
   }
 
+  const noErrorsInTravelRoute = !travelRoute.origin.error &&
+    travelRoute.destinations.every(destination => !destination.error)
+
+  const isValidPassengerNumber = numPas >= 1
+
+  const isValidDate = !date.isBefore(dayjs(), 'day')
+
+  const allFieldsAreValid = noErrorsInTravelRoute && travelRoute.origin.name.length > 0 &&
+    travelRoute.destinations.every(destination => destination.name.length > 0) &&
+    isValidPassengerNumber &&
+    isValidDate
+
+  console.log('validity', noErrorsInTravelRoute, isValidPassengerNumber, isValidDate)
 
   return (
     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'row', gap: '1em', minWidth: '600px' }}>
@@ -41,7 +54,7 @@ export const SearchForm = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
         <PassengerNumberInput numOfPassengers={numPas} setNumOfPassengers={setNumOfPassengers} />
         <TravelDateInput date={date} setDate={setDate} />
-        <Button variant="contained" color="primary">Submit</Button>
+        <Button variant="contained" color="primary" disabled={!allFieldsAreValid}>Submit</Button>
       </Box>
     </Paper>
   )
