@@ -94,7 +94,7 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
     const error = { helperText: cityEntry.error, error: !!cityEntry.error }
 
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em', alignItems: 'center' }} key={`destination-${index}`}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em', alignItems: 'start' }} key={`destination-${index}`}>
         <Autocomplete id={`travel-route-${index}`}
           key={travelRouteKey}
           options={availableCityOptions}
