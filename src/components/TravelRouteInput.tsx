@@ -29,8 +29,8 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
     }
   }, [travelRoute.destinations, updateTravelRoute])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onCityInputChange = useCallback((travelRouteKey: TravelRouteKey) => debounce((_e: SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
+  const onCityInputChange = useCallback((travelRouteKey: TravelRouteKey) => 
+    debounce((_e: SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
       if (!value || value.length === 0 || reason === 'reset') {
         setAvailableCityOptions(() => [])
         return
@@ -49,17 +49,11 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
     }, debounceTime), [updateTravelRouteAtKey])
   
 
-  const onCitySelect = useCallback((travelRouteKey: string) => (_e: SyntheticEvent<Element, Event>, value: string | null,) => {
-    if (travelRouteKey === 'origin') {
-      updateTravelRoute(travelRoute => ({ ...travelRoute, origin: { name: value || '' } }))
-    } else {
-      const index = parseInt(travelRouteKey.split('-')[1])
-      const newDestinations = [...travelRoute.destinations]
-      newDestinations[index] = { name: value || '' }
-      updateTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
-    }
-    setAvailableCityOptions(() => [])
-  }, [travelRoute.destinations, updateTravelRoute])
+  const onCitySelect = useCallback((travelRouteKey: TravelRouteKey) => 
+    (_e: SyntheticEvent<Element, Event>, value: string | null,) => {
+      updateTravelRouteAtKey(travelRouteKey, { name: value || '' })
+      setAvailableCityOptions(() => [])
+    }, [updateTravelRouteAtKey])
 
 
   const onAddNextDestination = useCallback(() => {
