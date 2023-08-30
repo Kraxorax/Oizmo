@@ -5,16 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as dayjs from 'dayjs';
 import { TravelRouteInput } from "../components/TravelRouteInput";
 import { useSearchParams } from "react-router-dom";
-
-export type TravelRoute = {
-  origin: string
-  destinations: string[]
-}
-
-const emptyTravelRoute: TravelRoute = {
-  origin: '',
-  destinations: [''],
-}
+import { TravelRoute, emptyTravelRoute } from "../models/TravelRoute";
 
 export const SearchForm = () => {
   const [searchParams, setSearchParams] = useSearchParams();

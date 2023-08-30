@@ -31,7 +31,7 @@ export const findCity = async (name: string) => {
   const cityToSerach = name.toLowerCase().trim();
 
   if (cityToSerach === 'fail') {
-    throw new Error('City not found')
+    throw new Error('Oops, something went wrong')
   }
 
   const foundCities = cities.filter(city => city[0].toLowerCase().includes(cityToSerach))
