@@ -55,6 +55,11 @@ button:hover {
   border-color: #646cff;
 }
 
+span.accent {
+  color: #7786D2;
+  font-weight: bold;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
