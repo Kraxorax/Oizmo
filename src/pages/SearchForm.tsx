@@ -1,12 +1,14 @@
-import { Box, Button, Paper } from "@mui/material"
+import { Box, Button, Grid, Paper, useTheme } from "@mui/material"
 import { TravelRouteInput } from "../components/TravelRouteInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TravelRoute, emptyTravelRoute } from "../models/TravelRoute";
 import * as dayjs from 'dayjs';
 import { TravelDateInput } from "../components/TravelDateInput";
 import { PassengerNumberInput } from "../components/PassengerNumberInput";
+import { useCallback } from 'react';
 
 export const SearchForm = () => {
+  const theme = useTheme()
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate()
   const numPas = +(searchParams.get('numPas') || 1)
@@ -17,27 +19,27 @@ export const SearchForm = () => {
     navigate({ pathname: '/results', search: searchParams.toString() })
   }
 
-  const setNumOfPassengers = (n: number) => {
+  const setNumOfPassengers = useCallback((n: number) => {
     setSearchParams((urlsp) => {
       urlsp.set('numPas', n.toString())
       return urlsp
     })
-  }
+  }, [setSearchParams])
 
-  const setDate = (date: dayjs.Dayjs | null) => {
+  const setDate = useCallback((date: dayjs.Dayjs | null) => {
     if (!date) return
     setSearchParams((urlsp) => {
       urlsp.set('date', date.format('YYYY-MM-DD'))
       return urlsp
     })
-  }
+  }, [setSearchParams])
 
-  const setTravelRoute = (travelRoute: TravelRoute) => {
+  const setTravelRoute = useCallback((travelRoute: TravelRoute) => {
     setSearchParams((urlsp) => {
       urlsp.set('travelRoute', JSON.stringify(travelRoute))
       return urlsp
     })
-  }
+  }, [setSearchParams])
 
   const noErrorsInTravelRoute = !travelRoute.origin.error &&
     travelRoute.destinations.every(destination => !destination.error)
@@ -54,13 +56,19 @@ export const SearchForm = () => {
   console.log('validity', noErrorsInTravelRoute, isValidPassengerNumber, isValidDate)
 
   return (
-    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'row', gap: '1em', minWidth: '600px' }}>
-      <TravelRouteInput travelRoute={travelRoute} setTravelRoute={setTravelRoute} />
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-        <PassengerNumberInput numOfPassengers={numPas} setNumOfPassengers={setNumOfPassengers} />
-        <TravelDateInput date={date} setDate={setDate} />
-        <Button variant="contained" color="primary" disabled={!allFieldsAreValid} onClick={navigateToResults}>Submit</Button>
-      </Box>
+    <Paper sx={theme.theTheme.mainPaper}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={8}>
+          <TravelRouteInput travelRoute={travelRoute} setTravelRoute={setTravelRoute} />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+            <PassengerNumberInput numOfPassengers={numPas} setNumOfPassengers={setNumOfPassengers} />
+            <TravelDateInput date={date} setDate={setDate} />
+            <Button variant="contained" color="primary" disabled={!allFieldsAreValid} onClick={navigateToResults}>Submit</Button>
+          </Box>
+        </Grid>
+      </Grid>
     </Paper>
   )
 }

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, TextField, AutocompleteInputChangeReason } from '@mui/material';
+import { Autocomplete, Box, Button, TextField, AutocompleteInputChangeReason, Tooltip } from '@mui/material';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { SyntheticEvent, useCallback, useMemo, useState } from "react"
 import { numberToOrdinalString } from "../utils/TextManipulation"
@@ -77,10 +77,12 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
       : `${numberToOrdinalString(index + 1)} destination`
 
     const removeButton = travelRoute.destinations.length > 1
-      ? <Button variant="outlined" tabIndex={-1}
-          onClick={() => onRemoveDestination(index)}>
-          <RemoveCircleOutlineIcon />
-        </Button>
+      ? <Tooltip title={'Remove destination'} enterDelay={2000}   >
+          <Button variant="text" tabIndex={-1}
+            onClick={() => onRemoveDestination(index)}>
+            <RemoveCircleOutlineIcon />
+          </Button>
+        </Tooltip>
       : null
 
     const travelRouteKey = `destination-${index}` as TravelRouteKey
@@ -109,7 +111,8 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
 
   const error = { helperText: travelRoute.origin.error, error: !!travelRoute.origin.error }
  
-  return (<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em', flexGrow: 5 }}>
+  return (
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em', flexGrow: 5 }}>
     <Autocomplete id={`travel-route-origin`}
       options={availableCityOptions}
       value={travelRoute.origin.name}
@@ -125,6 +128,6 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
 
     {allDestinationsAutocompletes}
       
-    <Button variant="outlined" onClick={onAddNextDestination}>Add next destination</Button>
+    <Button variant="text" onClick={onAddNextDestination}>Add destination</Button>
   </Box>)
 }

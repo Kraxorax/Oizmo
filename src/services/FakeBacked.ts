@@ -1,6 +1,7 @@
 type City = [string, number, number]
 
-const earthRadius = 6371; // Radius of the earth in km
+// Radius of the earth in km, used to calculate distances
+const earthRadius = 6371 
 
 const citiesDB: City[] = [
   ['Paris', 48.856614, 2.352222],
@@ -23,10 +24,15 @@ const citiesDB: City[] = [
   ['Dijon', 47.322047, 5.041480],
   ['Nîmes', 43.836699, 4.360054],
   ['Aix-en-Provence', 43.529742, 5.447427],
+  ['Null Island', 0, 0],
   ['Belgrade', 44.786568, 20.448922],
 ]
 
-
+/**
+ * Given a string this function will return a list of cities that match the string
+ * @param name part of the city name to search
+ * @returns a list of cities that match the string
+ */
 export const findCity = async (name: string) => {
   const cityToSearch = name.toLowerCase().trim();
 
@@ -43,7 +49,11 @@ export const findCity = async (name: string) => {
   return foundCities
 }
 
-
+/**
+ * Given a list of city names this function will return a list of distances between them
+ * @param cityNames list of city names
+ * @returns a list of distances between the cities
+ */
 export const getDistances = async (cityNames: string[]) => {
   if (cityNames.findIndex(city => city[0] === 'Dijon') > -1) {
     throw new Error('Dijon is not a real city')
