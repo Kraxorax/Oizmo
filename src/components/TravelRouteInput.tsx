@@ -39,7 +39,7 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
       setOptionsAreLoading(true)
 
       findCity(value).then(cities => {
-        setAvailableCityOptions(cities.map(city => city[0]))
+        setAvailableCityOptions(cities)
       }).catch((error) => {
         setAvailableCityOptions(() => [])
         updateTravelRouteAtKey(travelRouteKey, { name: value, error: error.message })

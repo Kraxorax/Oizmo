@@ -2,7 +2,7 @@ type City = [string, number, number]
 
 const earthRadius = 6371; // Radius of the earth in km
 
-const cities: City[] = [
+const citiesDB: City[] = [
   ['Paris', 48.856614, 2.352222],
   ['Marseille', 43.296482, 5.369780],
   ['Lyon', 45.764043, 4.835659],
@@ -28,30 +28,47 @@ const cities: City[] = [
 
 
 export const findCity = async (name: string) => {
-  const cityToSerach = name.toLowerCase().trim();
+  const cityToSearch = name.toLowerCase().trim();
 
-  if (cityToSerach === 'fail') {
+  if (cityToSearch === 'fail') {
     throw new Error('Oops, something went wrong')
   }
 
-  const foundCities = cities.filter(city => city[0].toLowerCase().includes(cityToSerach))
-
-  console.log('querying city', cityToSerach, 'found', foundCities)
+  const foundCities = citiesDB
+    .filter(city => city[0].toLowerCase().includes(cityToSearch))
+    .map(city => city[0])
 
   await wait(500)
+
   return foundCities
 }
 
 
-export const getDistance = async (city1: City, city2: City) => {
-  if (city1[0] === 'Dijon' && city2[0] === 'Dijon') {
-    throw new Error('Dijon is not a city')
+export const getDistances = async (cityNames: string[]) => {
+  if (cityNames.findIndex(city => city[0] === 'Dijon') > -1) {
+    throw new Error('Dijon is not a real city')
   }
 
-  const distance = getDistanceFromLatLonInKm(city1[1], city1[2], city2[1], city2[2])
+  const distances = []
+  for (let i = 1; i < cityNames.length; i++) {
+    const startCityName = cityNames[i-1]
+    const endCityName = cityNames[i]
+    const startCity = citiesDB.find(city => city[0] === startCityName)
+    const endCity = citiesDB.find(city => city[0] === endCityName)
+
+    if (!startCity || !endCity) {
+      throw new Error('City not found')
+    }
+
+    const distance = getDistanceFromLatLonInKm(startCity[1], startCity[2], endCity[1], endCity[2])
+    distances.push(distance)
+  }
+
   await wait(1000)
-  return distance
+
+  return distances
 }
+
 
 // Haversine formula
 const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -63,6 +80,7 @@ const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon
 
   return 2 * earthRadius * Math.asin(Math.sqrt(a))
 }
+
 
 // nice wait function
 const wait = (msec: number) => new Promise((resolve) => {
