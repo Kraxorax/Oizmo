@@ -58,9 +58,7 @@ export const SearchForm = () => {
   return (
     <Paper sx={theme.theTheme.mainPaper}>
       <Grid container spacing={4}>
-        <Grid item xs={12} md={8}>
-          <TravelRouteInput travelRoute={travelRoute} setTravelRoute={setTravelRoute} />
-        </Grid>
+        <TravelRouteInput travelRoute={travelRoute} setTravelRoute={setTravelRoute} />
         <Grid item xs={12} md={4}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
             <PassengerNumberInput numOfPassengers={numPas} setNumOfPassengers={setNumOfPassengers} />

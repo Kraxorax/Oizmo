@@ -8,7 +8,7 @@ const theTheme = {
       p: 8, display: 'flex', gap: '1em', padding: "1em", margin: 0,
     },
     [baseTheme.breakpoints.up('sm')]: {
-      p: 8, display: 'flex', gap: '1em', borderRadius: "16px", maxWidth: "800px", minWidth: "300px"
+      p: 8, display: 'flex', gap: '1em', borderRadius: "16px", maxWidth: "600px", minWidth: "600px"
     },
   },
   centered: {

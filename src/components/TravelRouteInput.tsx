@@ -1,10 +1,11 @@
-import { Autocomplete, Box, Button, TextField, AutocompleteInputChangeReason, Tooltip } from '@mui/material';
+import { Autocomplete, Button, TextField, AutocompleteInputChangeReason, Tooltip, Grid } from '@mui/material';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { SyntheticEvent, useCallback, useMemo, useState } from "react"
 import { numberToOrdinalString } from "../utils/TextManipulation"
 import { debounce } from "lodash"
 import { findCity } from "../services/FakeBacked"
 import { CityEntry, TravelRoute, TravelRouteKey } from '../models/TravelRoute';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const debounceTime = 500
 
@@ -77,57 +78,66 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
       : `${numberToOrdinalString(index + 1)} destination`
 
     const removeButton = travelRoute.destinations.length > 1
-      ? <Tooltip title={'Remove destination'} enterDelay={2000}   >
-          <Button variant="text" tabIndex={-1}
-            onClick={() => onRemoveDestination(index)}>
-            <RemoveCircleOutlineIcon />
-          </Button>
-        </Tooltip>
+      ? <Grid item xs={1}> 
+          <Tooltip title={'Remove destination'} enterDelay={2000}>
+            <Button variant="text" tabIndex={-1} sx={{ minWidth: '0px' }}
+              onClick={() => onRemoveDestination(index)}>
+              <RemoveCircleOutlineIcon />
+            </Button>
+          </Tooltip>
+        </Grid>
       : null
 
     const travelRouteKey = `destination-${index}` as TravelRouteKey
 
     const error = { helperText: cityEntry.error, error: !!cityEntry.error }
 
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em', alignItems: 'start' }} key={`destination-${index}`}>
-        <Autocomplete id={`travel-route-${index}`}
-          key={travelRouteKey}
-          options={availableCityOptions}
-          value={cityEntry.name}
-          onInputChange={onCityInputChange(travelRouteKey)}
-          onChange={onCitySelect(travelRouteKey)}
-          onBlur={onAutocompleteBlur}
-          isOptionEqualToValue={() => true}
-          filterOptions={x => x}
-          loading={optionsAreLoading}
-          fullWidth
-          renderInput={(params) => <TextField {...params} label={label} variant="outlined" size="small" {...error}/>}
-          />
+    return ( //sx={{ display: 'flex', flexDirection: 'row', gap: '1em', alignItems: 'start' }} key={`destination-${index}`}
+      <Grid container item xs={12}>
+        <Grid item xs={removeButton ? 11 : 12}>
+          <Autocomplete id={`travel-route-${index}`}
+            key={travelRouteKey}
+            options={availableCityOptions}
+            value={cityEntry.name}
+            onInputChange={onCityInputChange(travelRouteKey)}
+            onChange={onCitySelect(travelRouteKey)}
+            onBlur={onAutocompleteBlur}
+            isOptionEqualToValue={() => true}
+            filterOptions={x => x}
+            loading={optionsAreLoading}
+            fullWidth
+            sx={{ height: '100%' }}
+            renderInput={(params) => <TextField {...params} label={label} variant="outlined" size="small" {...error}/>}
+            />
+        </Grid>
         {removeButton}
-      </Box>
+      </Grid>
     )
   }), [availableCityOptions, onAutocompleteBlur, onCityInputChange, onCitySelect, onRemoveDestination, optionsAreLoading, travelRoute.destinations])
 
   const error = { helperText: travelRoute.origin.error, error: !!travelRoute.origin.error }
  
-  return (
-  <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em', flexGrow: 5 }}>
-    <Autocomplete id={`travel-route-origin`}
-      options={availableCityOptions}
-      value={travelRoute.origin.name}
-      onInputChange={onCityInputChange('origin')}
-      onChange={onCitySelect('origin')}
-      onBlur={onAutocompleteBlur}
-      isOptionEqualToValue={() => true}
-      filterOptions={x => x}
-      loading={optionsAreLoading}
-      renderInput={(params) => <TextField {...params} label={'City of origin'} variant="outlined" size="small" {...error} />}
-      fullWidth
-      />
-
-    {allDestinationsAutocompletes}
+  return ( //sx={{ display: 'flex', flexDirection: 'column', gap: '1em', flexGrow: 5 }}
+    <Grid container item xs={12} md={8} spacing={1}>
+      <Grid item xs={12} sx={{ margin: 0}}>
+        <Autocomplete id={`travel-route-origin`}
+          options={availableCityOptions}
+          value={travelRoute.origin.name}
+          onInputChange={onCityInputChange('origin')}
+          onChange={onCitySelect('origin')}
+          onBlur={onAutocompleteBlur}
+          isOptionEqualToValue={() => true}
+          filterOptions={x => x}
+          loading={optionsAreLoading}
+          renderInput={(params) => <TextField {...params} label={'City of origin'} variant="outlined" size="small" {...error} />}
+          fullWidth
+          />
+      </Grid>
+      {allDestinationsAutocompletes}
       
-    <Button variant="text" onClick={onAddNextDestination}>Add destination</Button>
-  </Box>)
+      <Grid item xs={12}>
+        <Button variant="text" onClick={onAddNextDestination} startIcon={<AddCircleOutlineIcon />}>Add destination</Button>
+      </Grid>
+    </Grid>
+  )
 }
