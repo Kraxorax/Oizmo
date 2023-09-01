@@ -68,7 +68,7 @@ export const SearchResults = () => {
 
   return (
   <Paper sx={theme.theTheme.mainPaper}>
-    <Grid container spacing={4}>
+    <Grid container spacing={4} md={12}>
       <Grid container item md={8} spacing={0} sx={theme.theTheme.centered}>
         {citiesAndDistances}
       </Grid>

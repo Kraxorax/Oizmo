@@ -7,7 +7,7 @@ export const TravelDateInput = (props: { date: dayjs.Dayjs; setDate: (date: dayj
   const { date, setDate } = props;
 
   const isInPast = date.isBefore(dayjs(), 'day');
-  const slotProps = isInPast ? { textField: {helperText: 'Date cannot be in the past' }} : {};
+  const slotProps = isInPast ? { textField: { sx: { margin: 0 }, helperText: 'Date cannot be in the past' }} : {};
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
