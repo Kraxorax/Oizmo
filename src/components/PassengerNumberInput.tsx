@@ -6,7 +6,7 @@ export const PassengerNumberInput = (props: { numOfPassengers: number; setNumOfP
   const canDecrement = numOfPassengers > 1
   const helperText = numOfPassengers >= 1 ? null : 'There must be at least one passenger'
   const helperComponent = helperText ? <Typography variant="caption" color="error">{helperText}</Typography> : null
-  const border = helperText ? { border: '2px solid red', borderRadius: '8px'} : {}
+  const border = helperText ? { border: '1px solid #d32f2f', borderRadius: '4px'} : {}
 
   return (
   <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'center', gap: '1em', border }} >

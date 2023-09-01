@@ -29,7 +29,7 @@ export const SearchForm = () => {
   const setDate = useCallback((date: dayjs.Dayjs | null) => {
     if (!date) return
     setSearchParams((urlsp) => {
-      urlsp.set('date', date.format('YYYY-MM-DD'))
+      urlsp.set('date', date.format())
       return urlsp
     })
   }, [setSearchParams])

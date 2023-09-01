@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TravelRoute, emptyTravelRoute } from "../models/TravelRoute";
-import { Button, Grid, Paper, Typography, useTheme } from "@mui/material";
+import { Button, CircularProgress, Grid, Paper, Typography, useTheme } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { getDistances } from "../services/FakeBacked";
 import { SpanAccent } from "../components/SpanAccent";
@@ -68,28 +68,31 @@ export const SearchResults = () => {
 
   return (
   <Paper sx={theme.theTheme.mainPaper}>
-    <Grid container spacing={4} md={12}>
-      <Grid container item md={8} spacing={0} sx={theme.theTheme.centered}>
-        {citiesAndDistances}
-      </Grid>
-      <Grid container item md={8} spacing={2} sx={theme.theTheme.centered}>
-        <Grid item xs={12} sx={theme.theTheme.centered}>
-          <Typography variant="body2"><SpanAccent>{totalDistance} km</SpanAccent> is total distance</Typography>
+    { distances.length === 0 
+      ? <CircularProgress sx={{ margin: '0 auto'}} />
+      : <Grid container spacing={4}>
+          <Grid container item md={8} spacing={0} sx={theme.theTheme.centered}>
+            {citiesAndDistances}
+          </Grid>
+          <Grid container item md={8} spacing={2} sx={theme.theTheme.centered}>
+            <Grid item xs={12} sx={theme.theTheme.centered}>
+              <Typography variant="body2"><SpanAccent>{totalDistance} km</SpanAccent> is total distance</Typography>
+            </Grid>
+            <Grid item xs={12} sx={theme.theTheme.centered}>
+              <Typography variant="body2"><SpanAccent>{numberOfPassengers}</SpanAccent> passengers</Typography>
+            </Grid>
+            <Grid item xs={12} sx={theme.theTheme.centered}>
+              <Typography variant="body2"><SpanAccent>{date.format('MMM DD, YYYY')}</SpanAccent></Typography>
+            </Grid>
+            <Grid item xs={12} md={3} sx={theme.theTheme.centered}>
+              <Button variant="contained" color="primary" 
+                fullWidth
+                onClick={() => navigate({ pathname: '/', search: searchParams.toString()})}>
+                  Back
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sx={theme.theTheme.centered}>
-          <Typography variant="body2"><SpanAccent>{numberOfPassengers}</SpanAccent> passengers</Typography>
-        </Grid>
-        <Grid item xs={12} sx={theme.theTheme.centered}>
-          <Typography variant="body2"><SpanAccent>{date.format('MMM DD, YYYY')}</SpanAccent></Typography>
-        </Grid>
-        <Grid item xs={12} md={3} sx={theme.theTheme.centered}>
-          <Button variant="contained" color="primary" 
-            fullWidth
-            onClick={() => navigate({ pathname: '/', search: searchParams.toString()})}>
-              Back
-          </Button>
-        </Grid>
-      </Grid>
-    </Grid>
+    }
   </Paper>);
 }

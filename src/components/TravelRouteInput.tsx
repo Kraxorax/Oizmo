@@ -30,6 +30,15 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
     }
   }, [travelRoute.destinations, updateTravelRoute])
 
+  const getTravelRouteValueAtKey = useCallback((key: TravelRouteKey) => {
+    if (key === 'origin') {
+      return travelRoute.origin.name
+    } else {
+      const index = parseInt(key.split('-')[1])
+      return travelRoute.destinations[index].name
+    }
+  }, [travelRoute.destinations, travelRoute.origin.name])
+
   const onCityInputChange = useCallback((travelRouteKey: TravelRouteKey) => 
     debounce((_e: SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
       if (!value || value.length === 0 || reason === 'reset') {
@@ -67,9 +76,14 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
     updateTravelRoute(travelRoute => ({ ...travelRoute, destinations: newDestinations }))
   }, [travelRoute.destinations, updateTravelRoute])
 
-  const onAutocompleteBlur = useCallback(() => {
+  const onAutocompleteBlur = useCallback((travelRouteKey: TravelRouteKey) => () => {
+    console.log('blur', travelRouteKey)
+    const blurredValue = getTravelRouteValueAtKey(travelRouteKey)
+    if (blurredValue.length === 0) {
+      updateTravelRouteAtKey(travelRouteKey, { name: blurredValue, error: 'City cannot be empty' })
+    }
     setAvailableCityOptions(() => [])
-  }, [])
+  }, [getTravelRouteValueAtKey, updateTravelRouteAtKey])
 
 
   const allDestinationsAutocompletes = useMemo(() => travelRoute.destinations.map((cityEntry, index) => { 
@@ -98,7 +112,7 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
           value={cityEntry.name}
           onInputChange={onCityInputChange(travelRouteKey)}
           onChange={onCitySelect(travelRouteKey)}
-          onBlur={onAutocompleteBlur}
+          onBlur={onAutocompleteBlur(travelRouteKey)}
           isOptionEqualToValue={() => true}
           filterOptions={x => x}
           loading={optionsAreLoading}
@@ -119,7 +133,7 @@ export const TravelRouteInput = (props: { travelRoute: TravelRoute, setTravelRou
       value={travelRoute.origin.name}
       onInputChange={onCityInputChange('origin')}
       onChange={onCitySelect('origin')}
-      onBlur={onAutocompleteBlur}
+      onBlur={onAutocompleteBlur('origin')}
       isOptionEqualToValue={() => true}
       filterOptions={x => x}
       loading={optionsAreLoading}
