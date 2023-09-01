@@ -1,23 +1,22 @@
-import dayjs from "dayjs";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { TravelRoute, emptyTravelRoute } from "../models/TravelRoute";
 import { Button, CircularProgress, Grid, Paper, Typography, useTheme } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDistances } from "../services/FakeBacked";
 import { SpanAccent } from "../components/SpanAccent";
 import zip from 'lodash/zip'
 import AdjustIcon from '@mui/icons-material/Adjust';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceIcon from '@mui/icons-material/Place';
+import { useTravelParams } from "../hooks/useTravelParams";
 
 
 export const SearchResults = () => {
   const theme = useTheme()
   const [searchParams, _setSearchParams] = useSearchParams();
   const navigate = useNavigate()
-  const numberOfPassengers = +(searchParams.get('numPas') || 1)
-  const date = dayjs(searchParams.get('date') || dayjs())
-  const travelRoute: TravelRoute = useMemo(() => JSON.parse(searchParams.get('travelRoute') || JSON.stringify(emptyTravelRoute)), [searchParams])
+  const { numPas,
+          date,
+          travelRoute } = useTravelParams()
 
   const [distances, setDistances] = useState<number[]>([])
 
@@ -79,7 +78,7 @@ export const SearchResults = () => {
               <Typography variant="body2"><SpanAccent>{totalDistance} km</SpanAccent> is total distance</Typography>
             </Grid>
             <Grid item xs={12} sx={theme.theTheme.centered}>
-              <Typography variant="body2"><SpanAccent>{numberOfPassengers}</SpanAccent> passengers</Typography>
+              <Typography variant="body2"><SpanAccent>{numPas}</SpanAccent> passengers</Typography>
             </Grid>
             <Grid item xs={12} sx={theme.theTheme.centered}>
               <Typography variant="body2"><SpanAccent>{date.format('MMM DD, YYYY')}</SpanAccent></Typography>
