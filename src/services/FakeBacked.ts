@@ -54,9 +54,10 @@ export const findCity = async (name: string) => {
  * @param cityNames list of city names
  * @returns a list of distances between the cities
  */
-export const getDistances = async (cityNames: string[]) => {
-  if (cityNames.findIndex(city => city[0] === 'Dijon') > -1) {
-    throw new Error('Dijon is not a real city')
+export const getDistances = async (cityNames: string[]): Promise<number[]> => {
+  if (cityNames.findIndex(city => city === 'Dijon') > -1) {
+    await wait(1500)
+    throw new Error('Oops! Something went wrong!')
   }
 
   const distances = []

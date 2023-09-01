@@ -1,36 +1,49 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, CircularProgress, Grid, Paper, Typography, useTheme } from "@mui/material";
-import { useEffect, useState } from "react";
-import { getDistances } from "../services/FakeBacked";
 import { SpanAccent } from "../components/SpanAccent";
 import zip from 'lodash/zip'
 import AdjustIcon from '@mui/icons-material/Adjust';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceIcon from '@mui/icons-material/Place';
 import { useTravelParams } from "../hooks/useTravelParams";
+import { useDistances } from "../hooks/useDistances";
 
+
+const BackButton = () => {
+  const theme = useTheme()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+
+  return (
+    <Grid item xs={12} md={3} sx={theme.theTheme.centered}>
+      <Button variant="contained" color="primary" 
+        fullWidth
+        onClick={() => navigate({ pathname: '/', search: searchParams.toString()})}>
+          Back
+      </Button>
+    </Grid>
+  )
+}
+
+const ErrorView = (props: { error: string }) => {
+  const { error } = props
+  const theme = useTheme()
+
+  return (
+    <Grid item xs={12} sx={theme.theTheme.centered}>
+      <Typography variant="body2" color="error" sx={{ margin: '3em 0'}}>{error}</Typography>
+      <BackButton />
+    </Grid>
+  )
+}
 
 export const SearchResults = () => {
   const theme = useTheme()
-  const [searchParams, _setSearchParams] = useSearchParams();
-  const navigate = useNavigate()
   const { numPas,
           date,
           travelRoute } = useTravelParams()
 
-  const [distances, setDistances] = useState<number[]>([])
-
-  //TODO: use a loading state, kill useEffect
-  useEffect(() => {
-    const cities = [travelRoute.origin, ...travelRoute.destinations].map(city => city.name)
-
-    getDistances(cities).then(distances => {
-      setDistances(distances)
-    }).catch(error => {
-      console.error('error', error)
-    })
-
-  }, [travelRoute.destinations, travelRoute.origin])
+  const {distances, error, loading} = useDistances(travelRoute)
 
   const totalDistance = distances.reduce((acc, distance) => acc + distance, 0).toFixed(2)
 
@@ -65,10 +78,16 @@ export const SearchResults = () => {
 
   const citiesAndDistances = zip(cityComponents, distanceComponents)
 
+  const errorOrLoading = error
+    ? <ErrorView error={error} />
+    : loading 
+      ? <CircularProgress sx={{ margin: '0 auto'}} />
+      : null
+
   return (
   <Paper sx={theme.theTheme.mainPaper}>
-    { distances.length === 0 
-      ? <CircularProgress sx={{ margin: '0 auto'}} />
+    { errorOrLoading 
+      ? errorOrLoading
       : <Grid container spacing={4}>
           <Grid container item md={8} spacing={0} sx={theme.theTheme.centered}>
             {citiesAndDistances}
@@ -83,13 +102,7 @@ export const SearchResults = () => {
             <Grid item xs={12} sx={theme.theTheme.centered}>
               <Typography variant="body2"><SpanAccent>{date.format('MMM DD, YYYY')}</SpanAccent></Typography>
             </Grid>
-            <Grid item xs={12} md={3} sx={theme.theTheme.centered}>
-              <Button variant="contained" color="primary" 
-                fullWidth
-                onClick={() => navigate({ pathname: '/', search: searchParams.toString()})}>
-                  Back
-              </Button>
-            </Grid>
+            <BackButton />
           </Grid>
         </Grid>
     }
