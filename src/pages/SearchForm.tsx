@@ -65,8 +65,10 @@ export const SearchForm = () => {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4em' }}>
             <PassengerNumberInput numOfPassengers={numPas} setNumOfPassengers={setNumOfPassengers} />
             <TravelDateInput date={date} setDate={setDate} />
-            <Button variant="contained" color="primary" disabled={!allFieldsAreValid} onClick={navigateToResults}>Submit</Button>
           </Box>
+        </Grid>
+        <Grid item xs={12} md={2} sx={{ ...theme.theTheme.centered}}>
+          <Button variant="contained" color="primary" fullWidth sx={{ marginTop: '2em' }} disabled={!allFieldsAreValid} onClick={navigateToResults}>Submit</Button>
         </Grid>
       </Grid>
     </Paper>
