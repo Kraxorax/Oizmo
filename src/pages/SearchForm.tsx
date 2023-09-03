@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Paper, useTheme } from "@mui/material"
 import { TravelRouteInput } from "../components/TravelRouteInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { TravelDateInput } from "../components/TravelDateInput";
 import { PassengerNumberInput } from "../components/PassengerNumberInput";
 import { useTravelParams } from "../hooks/useTravelParams";
@@ -12,11 +12,11 @@ export const SearchForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate()
   const { numPas,
-          date,
-          travelRoute,
-          setNumOfPassengers,
-          setDate,
-          setTravelRoute } = useTravelParams()
+    date,
+    travelRoute,
+    setNumOfPassengers,
+    setDate,
+    setTravelRoute } = useTravelParams()
 
   const navigateToResults = () => {
     navigate({ pathname: '/results', search: searchParams.toString() })
@@ -48,7 +48,7 @@ export const SearchForm = () => {
             <TravelDateInput date={date} setDate={setDate} />
           </Box>
         </Grid>
-        <Grid item xs={12} md={2} sx={{ ...theme.theTheme.centered}}>
+        <Grid item xs={12} md={2} sx={{ ...theme.theTheme.centered }}>
           <Button variant="contained" color="primary" fullWidth sx={{ marginTop: '2em' }} disabled={!allFieldsAreValid} onClick={navigateToResults}>Submit</Button>
         </Grid>
       </Grid>
