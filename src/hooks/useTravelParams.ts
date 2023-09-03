@@ -12,7 +12,7 @@ export const useTravelParams = (): {
   setTravelRoute: (travelRoute: TravelRoute) => void,
 } => {
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const numPas = +(searchParams.get('numPas') || 1)
   const date = dayjs(searchParams.get('date') || dayjs().format('YYYY-MM-DD'))
   const travelRoute: TravelRoute = JSON.parse(searchParams.get('travelRoute') || JSON.stringify(emptyTravelRoute))
@@ -46,5 +46,5 @@ export const useTravelParams = (): {
     setNumOfPassengers,
     setDate,
     setTravelRoute,
-  }  
+  }
 }
